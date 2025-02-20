@@ -1,0 +1,37 @@
+<html>
+<head>
+
+</head>
+<script>
+function getddl () 
+{
+     document.getElementById('lblmess').innerHTML=
+     ("The Selected Dropdown Value is :<b style='color,red;'>" + formid.ddlselect[formid.ddlselect.selectedIndex].text + '</b>')
+}
+
+</script>    
+
+<body>
+    <center>
+        <h1> How To Get The Selected Dropdown (select option) value</h1>
+        <h2>Using Javascript</h2>
+        <hr/>
+        <form name="formid">
+            <select name="ddlselect" onchange="getddl()">
+                <option> Select Games</option>
+                <option value= "Football">Football</option>
+                <option value="Cricket">Cricket</option>
+                <option value= "Rugby">Rugby</option>
+                <option value="Tennis">Tennis</option>
+
+                              
+
+            </select>
+        </form>
+        <label id="lblmess"></label>
+       
+    </center>
+</body>
+
+</html>
+    
