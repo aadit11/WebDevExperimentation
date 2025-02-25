@@ -1,0 +1,38 @@
+<html>
+    <head>
+        <title>DOM manipulations</title>
+        <script type="text/javascript">
+        
+        function fn1()
+        {
+            var rd1 = document.getElementById("rd1");
+            var rd2 = document.getElementById("rd2");
+
+            if(rd1.checked==true)
+                alert("The chanel selected is : " + rd1.value );
+            else if(rd2.checked==true)    
+                alert("The chanel selected is : " + rd2.value );
+            else
+                alert("No channel selected");    
+        }
+        
+        </script> 
+
+
+
+    </head>
+    <body>
+        
+            <h1>Gender</h1>
+
+        
+
+        <input id="rd1" name="grp1" type="radio" value="Male">Male</input>
+        <input id="rd2" name="grp1" type="radio" value="Female">Female</input>
+        <input id="rd3" name="grp1" type="radio" value="Other">Other</input>
+
+        <button onclick="fn1()">Click Me</button>
+
+
+    </body>
+</html>
