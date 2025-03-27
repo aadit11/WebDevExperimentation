@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editable JSON Data Tables</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+</head>
+<body>
+    <div id="tablesContainer"></div>
+    <button id="saveAll">Save All Changes</button>
+    <button id="downloadJson">Download JSON</button>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var jsonData = {
+  "Authorised Signatory for opening of Account": [
+    {
+      "Name of the Official": ["Mr. John Doe"],
+      "Designation": ["CFO"],
+      "Specimen Signature": ["John"]
+    }
+  ],
+  "Authorised Signatory for operations of Account": [
+    {
+      "Name of the Official": ["Mr. John Doe"],
+      "Designation": ["CFO"],
+      "Specimen Signature": ["John"],
+      "Limits": ["10,00,00"]
+    },
+    {
+      "Name of the Official": ["Ms. Mary Jane"],
+      "Designation": ["Treasurer"],
+      "Specimen Signature": ["Mary"],
+      "Limits": ["5,00,00"]
+    }
+  ],
+  "Corporate Internet Banking CIB": [
+    {
+      "Name of the Official": ["Mr. Arvind Ramaswamy"],
+      "Limit From": ["0"],
+      "Limit To": ["5,00,00"],
+      "To be Approved by": ["Mary Jane"]
+    },
+    {
+      "Name of the Official": ["Mr. Raju Sharma"],
+      "Limit From": ["0"],
+      "Limit To": ["10,00,000"],
+      "To be Approved by": ["John Doe"]
+    }
+  ],
+  "Phone Banking Email": [
+    {
+      "Name of the Official": ["Mr. Arvind Ramaswamy"]
+    }
+  ],
+  "ATM Card Debit Card": [
+    {
+      "Name of the Official": ["Mr. Arvind Ramaswamy"]
+    }
+  ],
+  "Other Banking Facilities": [
+    {
+      "Name of the Official": ["Mr. John Doe"]
+    }
+  ]
+};;
+            var tables = [];
+
+            $.each(jsonData, function (section, fields) {
+                var tableId = section.replace(/[^a-zA-Z0-9]/g, '_') + "Table";
+                $("#tablesContainer").append('<h2>' + section + '</h2>');
+                $("#tablesContainer").append('<table id="' + tableId + '" class="display" style="width:100%"></table>');
+
+                var headers = [{ title: 'Sr No', data: null }]; // Add Sr No column
+                $.each(fields[0], function (key) {
+                    headers.push({ title: key, data: key });
+                });
+
+                var table = $('#' + tableId).DataTable({
+                    "data": fields,
+                    "columns": headers,
+                    "columnDefs": [{
+                        "targets": 0,
+                        "data": null,
+                        "render": function (data, type, row, meta) {
+                            return type === 'display' ? meta.row + 1 : data;
+                        }
+                    }, {
+                        "targets": "_all",
+                        "render": function (data, type, row, meta) {
+                            return type === 'display' ? '<div contenteditable>' + data + '</div>' : data;
+                        }
+                    }]
+                });
+
+                tables.push(table);
+
+                $('#' + tableId + ' tbody').on('blur', 'td', function () {
+                    var cell = table.cell(this);
+                    var columnIndex = cell.index().column;
+                    var header = table.settings().init().columns[columnIndex].title;
+                    var rowData = cell.row(cell.index().row).data();
+                    rowData[header] = $(this).find('div').text();
+                    cell.data(rowData[header]);
+                });
+            });
+
+            $('#saveAll').on('click', function () {
+                $.each(tables, function(index, table) {
+                    var section = table.settings().init().ajax.dataSrc;
+                    jsonData[section] = table.rows().data().toArray();
+                });
+                alert('All changes saved to JSON!');
+            });
+
+            $('#downloadJson').on('click', function () {
+                var blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: 'application/json' });
+                var a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'updated_data.json';
+                a.click();
+            });
+        });
+    </script>
+</body>
+</html>
